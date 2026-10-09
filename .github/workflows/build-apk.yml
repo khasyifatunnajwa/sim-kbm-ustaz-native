@@ -1,8 +1,10 @@
+
 name: Build SIM KBM Ustaz Native APK
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -13,29 +15,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ambil kode proyek
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Siapkan Java 17
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Siapkan Android SDK
+      - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Pasang Android SDK yang dibutuhkan
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install Android SDK
         run: |
-          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+          sdkmanager "platforms;android-36" \
+            "build-tools;36.0.0" \
+            "platform-tools"
 
-      - name: Izinkan Gradle Wrapper berjalan
-        run: chmod +x gradlew
+      - name: Build debug APK
+        run: |
+          chmod +x ./gradlew
+          ./gradlew --no-daemon assembleDebug
 
-      - name: Bangun APK debug
-        run: ./gradlew --no-daemon assembleDebug
-
-      - name: Simpan APK sebagai artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: sim-kbm-ustaz-native-debug
