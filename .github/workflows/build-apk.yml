@@ -1,4 +1,3 @@
-
 name: Build SIM KBM Ustaz Native APK
 
 on:
@@ -23,9 +22,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
 
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses
