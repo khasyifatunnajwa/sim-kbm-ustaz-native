@@ -83,7 +83,7 @@ private fun NativeHomeScreen(db: AppDatabase) {
     Scaffold(
         bottomBar = {
             NavigationBar {
-                listOf("Beranda", "Kelas", "Murid", "Sinkronisasi").forEach { menu ->
+                listOf("Beranda", "Kelas", "Murid", "Absensi", "Sinkronisasi").forEach { menu ->
                     NavigationBarItem(
                         selected = halaman == menu,
                         onClick = {
@@ -95,6 +95,7 @@ private fun NativeHomeScreen(db: AppDatabase) {
                                 when (menu) {
                                     "Beranda" -> "⌂"
                                     "Kelas" -> "▤"
+                                    "Absensi" -> "✓"
                                     "Murid" -> "♙"
                                     else -> "↻"
                                 }
@@ -180,6 +181,10 @@ private fun NativeHomeScreen(db: AppDatabase) {
 
                     MenuCard("👨‍🎓  Data Murid", "Lihat murid berdasarkan kelas") {
                         halaman = "Murid"
+                    }
+
+                    MenuCard("📋  Absensi Harian", "Catat kehadiran murid") {
+                        halaman = "Absensi"
                     }
 
                     MenuCard("🔄  Status Sinkronisasi", "Periksa antrean perubahan data") {
@@ -392,6 +397,10 @@ private fun NativeHomeScreen(db: AppDatabase) {
                             PesanKosong("Pilih kelas untuk melihat daftar murid.")
                         }
                     }
+                }
+
+                "Absensi" -> {
+                    AbsensiScreen(db)
                 }
 
                 "Sinkronisasi" -> {
