@@ -23,8 +23,12 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Check Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          command -v sdkmanager
+          sdkmanager --version
 
       - name: Accept Android SDK licenses
         shell: bash
@@ -32,9 +36,10 @@ jobs:
           set +o pipefail
           yes | sdkmanager --licenses
 
-      - name: Install Android SDK
+      - name: Install Android SDK packages
         run: |
-          sdkmanager "platforms;android-36" \
+          sdkmanager \
+            "platforms;android-36" \
             "build-tools;36.0.0" \
             "platform-tools"
 
