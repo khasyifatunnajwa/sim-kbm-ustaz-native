@@ -484,17 +484,55 @@ private fun NativeHomeScreen(db: AppDatabase) {
                 }
 
                 "Jurnal KBM" -> {
-                    HalamanFiturBelumTersedia(
-                        namaMenu = halaman,
-                        onKembali = { halaman = "Lainnya" }
-                    )
+                    JurnalKBMScreen(db)
                 }
 
                 "Jadwal Mengajar" -> {
-                    HalamanFiturBelumTersedia(
-                        namaMenu = halaman,
-                        onKembali = { halaman = "Lainnya" }
-                    )
+                    JadwalScreen(db)
+                }
+
+                "Nilai" -> {
+                    NilaiScreen(db)
+                }
+
+                "Rapor" -> {
+                    RaporScreen(db)
+                }
+
+                "Agenda" -> {
+                    AgendaScreen(db)
+                }
+
+                "Pengumuman" -> {
+                    PengumumanScreen(db)
+                }
+
+                "Sikap" -> {
+                    SikapScreen(db)
+                }
+
+                "Tahun Ajaran & Semester" -> {
+                    TahunAjaranScreen(db)
+                }
+
+                "Bank Soal" -> {
+                    BankSoalScreen(db)
+                }
+
+                "Izin Mengajar" -> {
+                    IzinMengajarScreen(db)
+                }
+
+                "Buku Saku" -> {
+                    BukuSakuScreen(db)
+                }
+
+                "Pengaturan" -> {
+                    PengaturanScreen(db)
+                }
+
+                "Profil" -> {
+                    ProfilScreen()
                 }
 
                 else -> {

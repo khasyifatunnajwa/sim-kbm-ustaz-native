@@ -11,5 +11,23 @@ Build dilakukan melalui GitHub Actions.
 3. Jalankan workflow atau tunggu build otomatis selesai.
 4. Unduh artifact sim-kbm-ustaz-native-debug.
 
-Status saat ini: kerangka awal aplikasi. Login, penyimpanan offline,
-dan sinkronisasi Supabase belum diaktifkan.
+Fitur yang sudah tersedia:
+- Data Kelas dan Data Murid
+- Absensi Harian
+- Jurnal KBM
+- Jadwal Mengajar
+- Nilai
+- Rapor (rekap nilai per murid)
+- Agenda
+- Pengumuman
+- Sikap (penilaian sikap murid)
+- Tahun Ajaran & Semester
+- Bank Soal
+- Izin Mengajar
+- Buku Saku
+- Pengaturan
+- Profil
+- Sinkronisasi (antreean data lokal)
+
+Login dan sinkronisasi Supabase belum diaktifkan. Data disimpan
+secara lokal di perangkat.
