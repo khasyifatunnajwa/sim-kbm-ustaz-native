@@ -83,7 +83,10 @@ private fun NativeHomeScreen(db: AppDatabase) {
     Scaffold(
         bottomBar = {
             NavigationBar {
-                listOf("Beranda", "Kelas", "Murid", "Absensi", "Sinkronisasi").forEach { menu ->
+                listOf(
+                    "Beranda", "Absensi", "Jurnal KBM",
+                    "Jadwal Mengajar", "Lainnya"
+                ).forEach { menu ->
                     NavigationBarItem(
                         selected = halaman == menu,
                         onClick = {
@@ -94,10 +97,10 @@ private fun NativeHomeScreen(db: AppDatabase) {
                             Text(
                                 when (menu) {
                                     "Beranda" -> "⌂"
-                                    "Kelas" -> "▤"
                                     "Absensi" -> "✓"
-                                    "Murid" -> "♙"
-                                    else -> "↻"
+                                    "Jurnal KBM" -> "▤"
+                                    "Jadwal Mengajar" -> "▦"
+                                    else -> "⋯"
                                 }
                             )
                         },
@@ -189,6 +192,10 @@ private fun NativeHomeScreen(db: AppDatabase) {
 
                     MenuCard("🔄  Status Sinkronisasi", "Periksa antrean perubahan data") {
                         halaman = "Sinkronisasi"
+                    }
+
+                    MenuCard("🗂️  Lihat Semua Menu", "Buka seluruh menu aplikasi") {
+                        halaman = "Lainnya"
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -440,6 +447,62 @@ private fun NativeHomeScreen(db: AppDatabase) {
                             "data sudah terkirim ke Supabase."
                     )
                 }
+
+                "Lainnya" -> {
+                    Text(
+                        "Semua Menu",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Pilih menu yang ingin dibuka.")
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    listOf(
+                        Triple("Data Kelas", "Kelola kelas", "Kelas"),
+                        Triple("Data Murid", "Kelola murid", "Murid"),
+                        Triple("Absensi", "Catatan kehadiran", "Absensi"),
+                        Triple("Jurnal KBM", "Catatan kegiatan belajar", "Jurnal KBM"),
+                        Triple("Jadwal Mengajar", "Jadwal mengajar", "Jadwal Mengajar"),
+                        Triple("Nilai", "Pengelolaan nilai", "Nilai"),
+                        Triple("Rapor", "Rekap hasil belajar", "Rapor"),
+                        Triple("Agenda", "Agenda kegiatan", "Agenda"),
+                        Triple("Pengaturan", "Pengaturan aplikasi", "Pengaturan"),
+                        Triple("Pengumuman", "Informasi dan pengumuman", "Pengumuman"),
+                        Triple("Bank Soal", "Kumpulan soal", "Bank Soal"),
+                        Triple("Izin Mengajar", "Catatan izin mengajar", "Izin Mengajar"),
+                        Triple("Buku Saku", "Referensi ringkas", "Buku Saku"),
+                        Triple("Sikap", "Perkembangan sikap murid", "Sikap"),
+                        Triple("Tahun Ajaran & Semester", "Periode belajar", "Tahun Ajaran & Semester"),
+                        Triple("Sinkronisasi Data", "Antrean data lokal", "Sinkronisasi"),
+                        Triple("Profil", "Profil pengguna", "Profil")
+                    ).forEach { item ->
+                        MenuCard(item.first, item.second) {
+                            halaman = item.third
+                        }
+                    }
+                }
+
+                "Jurnal KBM" -> {
+                    HalamanFiturBelumTersedia(
+                        namaMenu = halaman,
+                        onKembali = { halaman = "Lainnya" }
+                    )
+                }
+
+                "Jadwal Mengajar" -> {
+                    HalamanFiturBelumTersedia(
+                        namaMenu = halaman,
+                        onKembali = { halaman = "Lainnya" }
+                    )
+                }
+
+                else -> {
+                    HalamanFiturBelumTersedia(
+                        namaMenu = halaman,
+                        onKembali = { halaman = "Lainnya" }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -597,6 +660,26 @@ private fun PesanKosong(pesan: String) {
             pesan,
             modifier = Modifier.padding(16.dp)
         )
+    }
+}
+
+@Composable
+private fun HalamanFiturBelumTersedia(
+    namaMenu: String,
+    onKembali: () -> Unit
+) {
+    Text(
+        namaMenu,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+    PesanKosong(
+        "Fitur $namaMenu belum diimplementasikan. " +
+            "Data lokal yang sudah ada tidak diubah."
+    )
+    Button(onClick = onKembali) {
+        Text("Kembali ke Semua Menu")
     }
 }
 

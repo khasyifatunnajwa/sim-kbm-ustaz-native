@@ -1,5 +1,7 @@
 package com.bustanululum.simkbmnative
 
+import kotlinx.coroutines.flow.catch
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,12 +47,21 @@ private val statusAbsensi = listOf(
 
 @Composable
 fun AbsensiScreen(db: AppDatabase) {
+    var pesan by remember { mutableStateOf<String?>(null) }
     val kelasList by db.kelasDao()
         .observeAll()
+        .catch { e ->
+            pesan = "Gagal membaca kelas: ${e.message ?: "kesalahan database"}"
+            emit(emptyList())
+        }
         .collectAsState(initial = emptyList())
 
     val semuaMurid by db.muridDao()
         .observeAll()
+        .catch { e ->
+            pesan = "Gagal membaca murid: ${e.message ?: "kesalahan database"}"
+            emit(emptyList())
+        }
         .collectAsState(initial = emptyList())
 
     var kelasId by remember { mutableStateOf<String?>(null) }
@@ -63,12 +74,14 @@ fun AbsensiScreen(db: AppDatabase) {
             ).format(Date())
         )
     }
-
-    var pesan by remember { mutableStateOf<String?>(null) }
     var tampilDialogTanggal by remember { mutableStateOf(false) }
 
     val absensiList by db.absensiDao()
         .observeByTanggal(tanggal)
+        .catch { e ->
+            pesan = "Gagal membaca absensi: ${e.message ?: "kesalahan database"}"
+            emit(emptyList())
+        }
         .collectAsState(initial = emptyList())
 
     val scope = rememberCoroutineScope()
