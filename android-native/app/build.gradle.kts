@@ -5,6 +5,17 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
+fun escapeBuildConfigString(value: String): String =
+    value.replace("\\", "\\\\").replace("\"", "\\\"")
+
+val supabaseUrl = providers.environmentVariable("SUPABASE_URL")
+    .orElse(providers.gradleProperty("SUPABASE_URL"))
+    .getOrElse("https://intkcrhsinezswldmokr.supabase.co")
+
+val supabaseAnonKey = providers.environmentVariable("SUPABASE_ANON_KEY")
+    .orElse(providers.gradleProperty("SUPABASE_ANON_KEY"))
+    .getOrElse("")
+
 android {
     namespace = "com.simkbm.ustaz"
     compileSdk = 34
@@ -22,8 +33,8 @@ android {
         }
 
         // Supabase configuration - gunakan BuildConfig
-        buildConfigField("String", "SUPABASE_URL", "\"https://intkcrhsinezswldmokr.supabase.co\"")
-        buildConfigField("String", "SUPABASE_ANON_KEY", "\"YOUR_SUPABASE_ANON_KEY\"") // Ganti di local.properties
+        buildConfigField("String", "SUPABASE_URL", "\"${escapeBuildConfigString(supabaseUrl)}\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY", "\"${escapeBuildConfigString(supabaseAnonKey)}\"")
     }
 
     buildTypes {
