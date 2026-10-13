@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - apk-replacement
   workflow_dispatch:
 
 permissions:
