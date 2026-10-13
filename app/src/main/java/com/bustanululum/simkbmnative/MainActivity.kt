@@ -558,7 +558,7 @@ private fun KelasPage(
         Spacer(Modifier.height(16.dp))
 
         if (kelasList.isEmpty()) {
-            EmptyState("Belum ada kelas. Tekan Tambah untuk membuat kelas pertama.")
+            EmptyStateMain("Belum ada kelas. Tekan Tambah untuk membuat kelas pertama.")
         }
 
         kelasList.forEach { kelas ->
@@ -628,7 +628,7 @@ private fun MuridPage(
         Spacer(Modifier.height(16.dp))
 
         if (kelasList.isEmpty()) {
-            EmptyState("Buat kelas terlebih dahulu melalui menu Kelas.")
+            EmptyStateMain("Buat kelas terlebih dahulu melalui menu Kelas.")
             Spacer(Modifier.height(12.dp))
             Button(
                 onClick = onBukaKelas,
@@ -697,7 +697,7 @@ private fun MuridPage(
                 val muridKelas = semuaMurid.filter { it.kelasLocalId == kelasAktif.localId }
 
                 if (muridKelas.isEmpty()) {
-                    EmptyState("Belum ada murid di kelas ini.")
+                    EmptyStateMain("Belum ada murid di kelas ini.")
                 }
 
                 muridKelas.forEach { murid ->
@@ -735,7 +735,7 @@ private fun MuridPage(
                     }
                 }
             } else {
-                EmptyState("Pilih kelas untuk melihat daftar murid.")
+                EmptyStateMain("Pilih kelas untuk melihat daftar murid.")
             }
         }
     }
@@ -819,7 +819,7 @@ private fun LainnyaPage(
 }
 
 @Composable
-private fun EmptyState(pesan: String) {
+private fun EmptyStateMain(pesan: String) {
     ModernCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -840,7 +840,7 @@ private fun HalamanFiturBelumTersedia(
     Column(modifier = Modifier.padding(16.dp)) {
         Text(namaMenu, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = SlateDark)
         Spacer(Modifier.height(12.dp))
-        EmptyState("Fitur $namaMenu belum diimplementasikan.")
+        EmptyStateMain("Fitur $namaMenu belum diimplementasikan.")
         Spacer(Modifier.height(12.dp))
         Button(
             onClick = onKembali,

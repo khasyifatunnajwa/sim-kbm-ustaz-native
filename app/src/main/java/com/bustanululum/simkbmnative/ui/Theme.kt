@@ -17,7 +17,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.Grades
+import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.LibraryBooks
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Notifications
@@ -78,7 +78,7 @@ object MenuIcons {
     val absensi: ImageVector = Icons.Filled.Checklist
     val jurnal: ImageVector = Icons.Filled.MenuBook
     val jadwal: ImageVector = Icons.Filled.Schedule
-    val nilai: ImageVector = Icons.Filled.Grades
+    val nilai: ImageVector = Icons.Filled.Assessment
     val rapor: ImageVector = Icons.Filled.Task
     val agenda: ImageVector = Icons.Filled.Event
     val pengumuman: ImageVector = Icons.Filled.Notifications
