@@ -1,5 +1,7 @@
 package com.simkbm.ustaz.ui.screens.main
 
+import androidx.compose.ui.platform.LocalContext
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -98,6 +100,7 @@ val bottomNavItems = listOf("dashboard", "jadwal", "absensi", "murid", "jurnal")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController) {
+    val activityContext = LocalContext.current
     var selectedTab by remember { mutableStateOf("dashboard") }
     var drawerOpen by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -117,7 +120,7 @@ fun MainScreen(navController: NavController) {
         val now = System.currentTimeMillis()
         if (now - lastBackPress < 2000) {
             // Exit app
-            android.app.Activity.finishAffinity(android.app.Activity())
+            (activityContext as? android.app.Activity)?.finishAffinity()
         } else {
             lastBackPress = now
             // Show toast - will be handled by snackbar

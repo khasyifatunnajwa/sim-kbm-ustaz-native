@@ -1,5 +1,7 @@
 package com.simkbm.ustaz.ui.screens.auth
 
+import kotlinx.coroutines.launch
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +29,7 @@ import com.simkbm.ustaz.ui.theme.Slate800
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit) {
+    val loginScope = rememberCoroutineScope()
     var idLogin by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -34,19 +37,19 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     // Demo login - in production, use AuthViewModel with Supabase
-    val handleLogin = {
+    val handleLogin: () -> Unit = login@{
         if (idLogin.isBlank() || password.isBlank()) {
             errorMessage = "Isi ID Login dan kata sandi"
-            return@handleLogin
+            return@login
         }
         if (password.length < 6) {
             errorMessage = "Kata sandi minimal 6 karakter"
-            return@handleLogin
+            return@login
         }
         isLoading = true
         errorMessage = null
         // Simulate login delay
-        kotlinx.coroutines.MainScope().launch {
+        loginScope.launch {
             kotlinx.coroutines.delay(800)
             isLoading = false
             onLoginSuccess()
