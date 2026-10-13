@@ -1,18 +1,29 @@
 package com.bustanululum.simkbmnative
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,12 +34,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.room.withTransaction
 import com.bustanululum.simkbmnative.data.local.AppDatabase
 import com.bustanululum.simkbmnative.data.local.PengumumanEntity
 import com.bustanululum.simkbmnative.data.local.SyncQueueEntity
+import com.bustanululum.simkbmnative.ui.EmeraldPrimary
+import com.bustanululum.simkbmnative.ui.GradientHeader
+import com.bustanululum.simkbmnative.ui.MintSurface
+import com.bustanululum.simkbmnative.ui.ModernCard
+import com.bustanululum.simkbmnative.ui.SlateDark
+import com.bustanululum.simkbmnative.ui.SlateLight
+import com.bustanululum.simkbmnative.ui.SlateMedium
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -48,67 +71,94 @@ fun PengumumanScreen(db: AppDatabase) {
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
     ) {
-        Text("Pengumuman", style = MaterialTheme.typography.headlineSmall)
-        Spacer(Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+                .background(GradientHeader)
+                .padding(24.dp)
         ) {
-            Text("Jumlah: ${pengumumanList.size}")
-            Button(onClick = { tampilDialog = true }) {
-                Text("+ Tambah")
+            Column {
+                Text("Pengumuman", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                Spacer(Modifier.height(4.dp))
+                Text("Info dan pengumuman untuk murid", fontSize = 13.sp, color = Color.White.copy(alpha = 0.85f))
             }
         }
 
-        Spacer(Modifier.height(12.dp))
-
-        if (pengumumanList.isEmpty()) {
-            Text("Belum ada pengumuman.")
-        }
-
-        pengumumanList.forEach { pengumuman ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 5.dp)
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        pengumuman.judul,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        "Tanggal: ${pengumuman.tanggal}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(pengumuman.isi)
-                    TextButton(onClick = {
-                        scope.launch {
-                            try {
-                                db.withTransaction {
-                                    db.syncQueueDao().enqueue(
-                                        SyncQueueEntity(
-                                            entityType = "pengumuman",
-                                            localId = pengumuman.localId,
-                                            operation = "DELETE",
-                                            payloadJson = JSONObject()
-                                                .put("localId", pengumuman.localId)
-                                                .put("serverId", pengumuman.serverId)
-                                                .toString()
-                                        )
-                                    )
-                                    db.pengumumanDao().delete(pengumuman)
-                                }
-                            } catch (e: Exception) {
-                                pesan = "Gagal menghapus: ${e.message}"
+                Text("${pengumumanList.size} pengumuman", fontSize = 14.sp, color = SlateMedium)
+                Button(
+                    onClick = { tampilDialog = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(4.dp))
+                    Text("Tambah")
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            if (pengumumanList.isEmpty()) {
+                EmptyState("Belum ada pengumuman.")
+            }
+
+            pengumumanList.forEach { pengumuman ->
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(MintSurface),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Filled.Notifications, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(20.dp))
                             }
+                            Spacer(Modifier.width(10.dp))
+                            Text(pengumuman.judul, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = SlateDark)
                         }
-                    }) {
-                        Text("Hapus", color = MaterialTheme.colorScheme.error)
+                        Spacer(Modifier.height(6.dp))
+                        Text("Tanggal: ${pengumuman.tanggal}", fontSize = 12.sp, color = SlateLight)
+                        Spacer(Modifier.height(6.dp))
+                        Text(pengumuman.isi, fontSize = 13.sp, color = SlateDark, lineHeight = 20.sp)
+                        Spacer(Modifier.height(8.dp))
+                        TextButton(onClick = {
+                            scope.launch {
+                                try {
+                                    db.withTransaction {
+                                        db.syncQueueDao().enqueue(
+                                            SyncQueueEntity(
+                                                entityType = "pengumuman",
+                                                localId = pengumuman.localId,
+                                                operation = "DELETE",
+                                                payloadJson = JSONObject()
+                                                    .put("localId", pengumuman.localId)
+                                                    .put("serverId", pengumuman.serverId)
+                                                    .toString()
+                                            )
+                                        )
+                                        db.pengumumanDao().delete(pengumuman)
+                                    }
+                                } catch (e: Exception) {
+                                    pesan = "Gagal menghapus: ${e.message}"
+                                }
+                            }
+                        }) {
+                            Icon(Icons.Filled.Delete, contentDescription = null, tint = Color(0xFFDC2626), modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("Hapus", color = Color(0xFFDC2626))
+                        }
                     }
                 }
             }
@@ -177,37 +227,40 @@ private fun DialogTambahPengumuman(
 
     AlertDialog(
         onDismissRequest = onTutup,
-        title = { Text("Tambah Pengumuman") },
+        title = { Text("Tambah Pengumuman", fontWeight = FontWeight.Bold) },
         text = {
             Column {
                 OutlinedTextField(
                     value = judul,
                     onValueChange = { judul = it },
                     label = { Text("Judul") },
-                    singleLine = true
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp)
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = isi,
                     onValueChange = { isi = it },
                     label = { Text("Isi pengumuman") },
-                    minLines = 3
+                    minLines = 3,
+                    shape = RoundedCornerShape(12.dp)
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = tanggal,
                     onValueChange = { tanggal = it },
                     label = { Text("Tanggal YYYY-MM-DD") },
-                    singleLine = true
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp)
                 )
             }
         },
         confirmButton = {
             Button(
                 enabled = judul.isNotBlank() && isi.isNotBlank() && tanggal.isNotBlank(),
-                onClick = {
-                    onSimpan(judul.trim(), isi.trim(), tanggal.trim())
-                }
+                onClick = { onSimpan(judul.trim(), isi.trim(), tanggal.trim()) },
+                colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                shape = RoundedCornerShape(12.dp)
             ) { Text("Simpan") }
         },
         dismissButton = {
