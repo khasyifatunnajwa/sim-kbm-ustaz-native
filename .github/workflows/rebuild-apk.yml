@@ -1,0 +1,74 @@
+name: Rebuild SIM KBM Ustaz APK
+
+on:
+  push:
+    branches:
+      - apk-rebuild
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build tools
+        run: sdkmanager "build-tools;36.0.0" "platforms;android-36"
+
+      - name: Download Apktool
+        run: |
+          curl -fL \
+            https://github.com/iBotPeaches/Apktool/releases/download/v3.0.3/apktool_3.0.3.jar \
+            -o apktool.jar
+          java -jar apktool.jar --version
+
+      - name: Extract decoded APK
+        run: |
+          tar -xzf sim-kbm-apk-rebuild.tar.gz
+          test -f apktool/AndroidManifest.xml
+          test -f apktool/apktool.yml
+
+      - name: Rebuild APK
+        run: java -jar apktool.jar b apktool -o app-unsigned.apk
+
+      - name: Align and sign APK
+        run: |
+          BT="$ANDROID_HOME/build-tools/36.0.0"
+          keytool -genkeypair -v \
+            -keystore test-debug.keystore \
+            -storepass android \
+            -keypass android \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+          "$BT/zipalign" -f -p 4 app-unsigned.apk app-aligned.apk
+          "$BT/apksigner" sign \
+            --ks test-debug.keystore \
+            --ks-pass pass:android \
+            --key-pass pass:android \
+            --ks-key-alias androiddebugkey \
+            --out SIM-KBM-Ustaz-test.apk \
+            app-aligned.apk
+
+          "$BT/apksigner" verify --verbose SIM-KBM-Ustaz-test.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SIM-KBM-Ustaz-test
+          path: SIM-KBM-Ustaz-test.apk
+          if-no-files-found: error
